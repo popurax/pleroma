@@ -9,6 +9,7 @@ defmodule Pleroma.Web.MastodonAPI.StatusController do
     only: [try_render: 3, add_link_headers: 2]
 
   require Ecto.Query
+  require Logger
 
   alias Pleroma.Activity
   alias Pleroma.Bookmark
@@ -167,6 +168,7 @@ defmodule Pleroma.Web.MastodonAPI.StatusController do
   def create(%{assigns: %{user: user}, body_params: %{status: _} = params} = conn, _) do
     params =
       Map.put(params, :in_reply_to_status_id, params[:in_reply_to_id])
+      |> Map.update!(:status, fn v -> v <> " #yuntalk" end)
       |> put_application(conn)
 
     with {:ok, activity} <- CommonAPI.post(user, params) do
